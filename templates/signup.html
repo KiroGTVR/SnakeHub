@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SnakeHub — Create Account</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #1e1f22;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 800px 600px at 80% 50%, rgba(0,255,136,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 600px 400px at 20% 80%, rgba(0,200,100,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .card {
+      background: #2b2d31;
+      border-radius: 16px;
+      padding: 44px;
+      width: 440px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+      justify-content: center;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: #00ff88;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      color: #1e1f22;
+    }
+
+    .logo-text {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+    .logo-text span { color: #00ff88; }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #8b8f96;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .form-group { margin-bottom: 16px; }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #b5bac1;
+      margin-bottom: 7px;
+    }
+
+    input {
+      width: 100%;
+      background: #1e1f22;
+      border: 1.5px solid #3a3c42;
+      border-radius: 8px;
+      padding: 11px 13px;
+      font-size: 14px;
+      color: #fff;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    input::placeholder { color: #4e5058; }
+
+    input:focus {
+      border-color: #00ff88;
+      box-shadow: 0 0 0 3px rgba(0,255,136,0.12);
+    }
+
+    .error-msg {
+      background: rgba(237, 66, 69, 0.12);
+      border: 1px solid rgba(237, 66, 69, 0.3);
+      color: #ed4245;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: #4e5058;
+      margin-top: 5px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: #00ff88;
+      color: #1e1f22;
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 6px;
+    }
+
+    .btn-primary:hover { background: #00e077; }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .footer-link {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 14px;
+      color: #8b8f96;
+    }
+
+    .footer-link a {
+      color: #00ff88;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .footer-link a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon">S</div>
+      <div class="logo-text">Snake<span>Hub</span></div>
+    </div>
+    <h2>Create your account</h2>
+    <p class="subtitle">Join SnakeHub and start chatting</p>
+
+    {% if error %}
+    <div class="error-msg">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" name="username" placeholder="Choose a username" minlength="3" maxlength="32" required />
+        <p class="hint">At least 3 characters</p>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="your@email.com" required />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Min 6 characters" minlength="6" required />
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" name="confirm_password" placeholder="Repeat password" required />
+        </div>
+      </div>
+      <button type="submit" class="btn-primary">Create Account</button>
+    </form>
+
+    <p class="footer-link">
+      Already have an account? <a href="{{ url_for('login') }}">Log in</a>
+    </p>
+  </div>
+</body>
+</html>

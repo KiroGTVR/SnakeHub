@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SnakeHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+</head>
+<body>
+
+<!-- ───── LEFT SIDEBAR ───── -->
+<aside class="sidebar-left" id="sidebarLeft">
+
+  <!-- Logo / top bar -->
+  <div class="sidebar-header">
+    <div class="logo-mark">S</div>
+    <span class="logo-label">Snake<b>Hub</b></span>
+  </div>
+
+  <!-- User profile card -->
+  <div class="user-card" id="profileCard">
+    <div class="avatar-wrap" title="Click to upload avatar" id="avatarWrap">
+      <img src="{{ url_for('static', filename='avatars/' + current_user.avatar) }}"
+           alt="{{ current_user.username }}" class="avatar" id="myAvatar" />
+      <div class="avatar-overlay">📷</div>
+      <input type="file" id="avatarInput" accept="image/*" style="display:none"/>
+    </div>
+    <div class="user-info">
+      <div class="user-name">{{ current_user.username }}</div>
+      <div class="user-status online"><span class="dot"></span> Online</div>
+    </div>
+    <a href="{{ url_for('logout') }}" class="logout-btn" title="Log out">⏻</a>
+  </div>
+
+  <!-- Navigation tabs -->
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-tab="friends">Friends</button>
+    <button class="nav-tab" data-tab="dms">Messages</button>
+  </div>
+
+  <!-- Friends tab -->
+  <div class="tab-content active" id="tab-friends">
+
+    <!-- Add friend -->
+    <div class="section-label">Find People</div>
+    <div class="search-row">
+      <input type="text" id="friendSearch" placeholder="Search username…" class="sidebar-input" />
+      <button class="icon-btn green" id="searchBtn" title="Search">🔍</button>
+    </div>
+    <div id="searchResults" class="search-results"></div>
+
+    <!-- Pending requests -->
+    <div class="section-label" id="pendingLabel" style="display:none">
+      Requests <span class="badge" id="pendingCount"></span>
+    </div>
+    <div id="pendingRequests">
+      {% for req in pending_in %}
+      <div class="friend-request-item" data-sender="{{ req.sender_id }}" id="req-{{ req.sender_id }}">
+        <img src="{{ url_for('static', filename='avatars/' + req.avatar) }}" class="avatar-sm" />
+        <span class="req-name">{{ req.username }}</span>
+        <button class="icon-btn green accept-btn" data-id="{{ req.sender_id }}" title="Accept">✓</button>
+        <button class="icon-btn red decline-btn" data-id="{{ req.sender_id }}" title="Decline">✗</button>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Friends list -->
+    <div class="section-label">Friends</div>
+    <div id="friendsList">
+      {% for f in friends %}
+      <div class="friend-item" data-id="{{ f.id }}" id="friend-{{ f.id }}">
+        <div class="avatar-status-wrap">
+          <img src="{{ url_for('static', filename='avatars/' + f.avatar) }}" class="avatar-sm" />
+          <span class="status-dot {% if is_online(f.id) %}online{% else %}offline{% endif %}" id="sdot-{{ f.id }}"></span>
+        </div>
+        <span class="friend-name">{{ f.username }}</span>
+        <button class="icon-btn blue dm-btn" data-id="{{ f.id }}" data-name="{{ f.username }}" title="Message">💬</button>
+        <button class="icon-btn red remove-btn" data-id="{{ f.id }}" title="Remove friend">✗</button>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- DMs tab -->
+  <div class="tab-content" id="tab-dms">
+    <div class="section-label">Direct Messages</div>
+    <div id="dmList">
+      {% for convo in dm_convos %}
+      <div class="dm-item {% if convo.unread > 0 %}has-unread{% endif %}"
+           data-id="{{ convo.user.id }}" data-name="{{ convo.user.username }}"
+           id="dm-{{ convo.user.id }}">
+        <div class="avatar-status-wrap">
+          <img src="{{ url_for('static', filename='avatars/' + convo.user.avatar) }}" class="avatar-sm" />
+          <span class="status-dot {% if is_online(convo.user.id) %}online{% else %}offline{% endif %}" id="sdot-{{ convo.user.id }}"></span>
+        </div>
+        <div class="dm-item-info">
+          <span class="dm-name">{{ convo.user.username }}</span>
+          {% if convo.last_msg %}
+          <span class="dm-preview">{{ convo.last_msg.content[:40] }}{% if convo.last_msg.content|length > 40 %}…{% endif %}</span>
+          {% endif %}
+        </div>
+        {% if convo.unread > 0 %}
+        <span class="unread-badge" id="unread-{{ convo.user.id }}">{{ convo.unread }}</span>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</aside>
+
+<!-- ───── MAIN AREA ───── -->
+<main class="main-area">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="channel-info">
+      <span class="channel-hash">#</span>
+      <span id="channelTitle">MAIN</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="toggleOnlineBtn" title="Toggle online users">👥</button>
+    </div>
+  </div>
+
+  <!-- Message area -->
+  <div class="messages-wrap" id="messagesWrap">
+
+    <!-- MAIN channel messages -->
+    <div id="mainMessages" class="msg-section active">
+      <div class="channel-welcome">
+        <div class="welcome-icon">#</div>
+        <h3>Welcome to <span style="color:#00ff88"># MAIN</span></h3>
+        <p>This is the one and only global channel. Say hello!</p>
+      </div>
+      {% for msg in messages %}
+      <div class="msg-row" id="msg-{{ msg.id }}">
+        <img src="{{ url_for('static', filename='avatars/' + msg.avatar) }}" class="avatar-msg" />
+        <div class="msg-content">
+          <div class="msg-meta">
+            <span class="msg-author">{{ msg.username }}</span>
+            <span class="msg-time">{{ format_ts(msg.timestamp) }}</span>
+          </div>
+          <div class="msg-text">{{ msg.content }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- DM messages (dynamically loaded) -->
+    <div id="dmMessages" class="msg-section"></div>
+
+  </div>
+
+  <!-- Typing indicator -->
+  <div class="typing-indicator" id="typingIndicator" style="display:none">
+    <div class="typing-dots"><span></span><span></span><span></span></div>
+    <span id="typingText"></span>
+  </div>
+
+  <!-- Message input -->
+  <div class="input-area">
+    <div class="input-wrap">
+      <input type="text" id="messageInput" placeholder="Message #MAIN" maxlength="2000" />
+      <button id="sendBtn" class="send-btn">Send</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- ───── RIGHT SIDEBAR ───── -->
+<aside class="sidebar-right" id="sidebarRight">
+  <div class="sidebar-header">
+    <span style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#8b8f96;font-weight:600">Online — <span id="onlineCount">0</span></span>
+  </div>
+  <div id="onlineList"></div>
+</aside>
+
+<!-- ───── NOTIFICATION TOAST ───── -->
+<div id="toastContainer"></div>
+
+<!-- Hidden current user data -->
+<script>
+  window.CURRENT_USER_ID = {{ current_user.id }};
+  window.CURRENT_USERNAME = "{{ current_user.username }}";
+  window.CURRENT_AVATAR = "{{ current_user.avatar }}";
+  window.PENDING_OUT_IDS = {{ pending_out_ids | tojson }};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
