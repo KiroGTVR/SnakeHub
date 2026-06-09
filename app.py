@@ -13,7 +13,7 @@ app.secret_key = os.environ.get('SECRET_KEY', 'change-this-to-a-long-random-stri
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'avatars')
 app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  # 4MB
 
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='gevent')
+socketio = SocketIO(app, cors_allowed_origins="*")
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
