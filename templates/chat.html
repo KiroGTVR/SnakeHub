@@ -115,15 +115,20 @@
 <main class="main-area">
 
   <!-- Top bar -->
-  <div class="topbar">
-    <div class="channel-info">
-      <span class="channel-hash">#</span>
-      <span id="channelTitle">MAIN</span>
-    </div>
-    <div class="topbar-actions">
-      <button class="icon-btn" id="toggleOnlineBtn" title="Toggle online users">👥</button>
-    </div>
+<div class="topbar">
+
+  <button id="mobileMenuBtn" class="mobile-menu-btn">☰</button>
+
+  <div class="channel-info">
+    <span class="channel-hash">#</span>
+    <span id="channelTitle">MAIN</span>
   </div>
+
+  <div class="topbar-actions">
+    <button class="icon-btn" id="toggleOnlineBtn" title="Toggle online users">👥</button>
+  </div>
+
+</div>
 
   <!-- Message area -->
   <div class="messages-wrap" id="messagesWrap">
@@ -190,5 +195,19 @@
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
 <script src="{{ url_for('static', filename='app.js') }}"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+    const sidebar = document.getElementById("sidebarLeft");
+
+    if (mobileMenuBtn && sidebar) {
+        mobileMenuBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("mobile-open");
+        });
+    }
+});
+</script>
+
 </body>
 </html>

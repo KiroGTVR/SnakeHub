@@ -706,3 +706,120 @@ body {
   text-align: center;
   padding: 12px;
 }
+
+/* ══════════════════════════════════════════
+   MOBILE SUPPORT
+   ══════════════════════════════════════════ */
+
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+
+    body {
+        display: flex;
+        overflow: hidden;
+    }
+
+    .sidebar-left {
+        position: fixed;
+        left: -100%;
+        top: 0;
+        width: 280px;
+        height: 100vh;
+        z-index: 1000;
+        transition: left 0.25s ease;
+    }
+
+    .sidebar-left.mobile-open {
+        left: 0;
+    }
+
+    .sidebar-right {
+        display: none;
+    }
+
+    .main-area {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .topbar {
+        padding: 0 12px;
+    }
+
+    .channel-info {
+        font-size: 14px;
+    }
+
+    .messages-wrap {
+        padding-bottom: 8px;
+    }
+
+    .msg-row {
+        padding: 6px 10px;
+        gap: 10px;
+    }
+
+    .avatar-msg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .msg-author {
+        font-size: 13px;
+    }
+
+    .msg-text {
+        font-size: 13px;
+    }
+
+    .input-area {
+        padding: 8px;
+    }
+
+    .input-wrap {
+        gap: 6px;
+    }
+
+    #messageInput {
+        font-size: 16px;
+    }
+
+    .send-btn {
+        padding: 8px 12px;
+    }
+
+    .channel-welcome,
+    .dm-welcome {
+        padding: 20px 12px;
+    }
+
+    .welcome-icon,
+    .dm-welcome-avatar {
+        width: 48px;
+        height: 48px;
+    }
+
+    #toastContainer {
+        right: 10px;
+        left: 10px;
+        bottom: 10px;
+    }
+
+    .toast {
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+}
